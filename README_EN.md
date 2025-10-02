@@ -57,7 +57,7 @@ The system uses a `configurations` table to manage all settings:
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| `nas_directory` | string | `\\192.168.1.160\service\CLIENTI` | NAS directory to scan |
+| `nas_directory` | string | `\\<NAS_IP>\<SHARE>\<FOLDER>` | NAS directory to scan |
 | `scan_interval` | integer | `10` | Interval in seconds between scans |
 | `exclude_extensions` | JSON array | `[".tmp", ".bak"]` | File extensions to exclude |
 | `periodically_scan` | boolean | `true` | Enable periodic scanning |
@@ -127,7 +127,7 @@ UPDATE configurations SET value = '30' WHERE key = 'scan_days_back';  -- Last 30
 
 ```
 Loaded configurations:
-  - NAS Directory: \\192.168.1.160\service\CLIENTI
+  - NAS Directory: \\<NAS_IP>\<SHARE>\<FOLDER>
   - Scan interval: 10 seconds
   - Excluded extensions: ['.tmp', '.bak']
   - Periodic scan: True
@@ -198,7 +198,7 @@ Example REST API for frontend:
 ```python
 # GET /api/config - Get all configurations
 {
-  "nas_directory": "\\\\192.168.1.160\\service\\CLIENTI",
+  "nas_directory": "\\\\<NAS_IP>\\<SHARE>\\<FOLDER>",
   "scan_interval": 10,
   "exclude_extensions": [".tmp", ".bak"],
   "periodically_scan": true,

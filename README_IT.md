@@ -57,7 +57,7 @@ Il sistema utilizza una tabella `configurations` per gestire tutte le impostazio
 
 | Chiave | Tipo | Default | Descrizione |
 |--------|------|---------|-------------|
-| `nas_directory` | string | `\\192.168.1.160\service\CLIENTI` | Directory del NAS da scansionare |
+| `nas_directory` | string | `\\<NAS_IP>\<SHARE>\<FOLDER>` | Directory del NAS da scansionare |
 | `scan_interval` | integer | `10` | Intervallo in secondi tra le scansioni |
 | `exclude_extensions` | JSON array | `[".tmp", ".bak"]` | Estensioni file da escludere |
 | `periodically_scan` | boolean | `true` | Abilita scansione periodica |
@@ -127,7 +127,7 @@ UPDATE configurations SET value = '30' WHERE key = 'scan_days_back';  -- Ultimi 
 
 ```
 Configurazioni caricate:
-  - Directory NAS: \\192.168.1.160\service\CLIENTI
+  - Directory NAS: \\<NAS_IP>\<SHARE>\<FOLDER>
   - Intervallo scansione: 10 secondi
   - Estensioni escluse: ['.tmp', '.bak']
   - Scansione periodica: True
@@ -198,7 +198,7 @@ Esempio di API REST per il frontend:
 ```python
 # GET /api/config - Ottieni tutte le configurazioni
 {
-  "nas_directory": "\\\\192.168.1.160\\service\\CLIENTI",
+  "nas_directory": "\\\\<NAS_IP>\\<SHARE>\\<FOLDER>",
   "scan_interval": 10,
   "exclude_extensions": [".tmp", ".bak"],
   "periodically_scan": true,

@@ -6,7 +6,7 @@ API REST integrata nel backend per monitorare lo stato e le statistiche del NAS 
 
 **Server**: `http://localhost:5000`
 
-**Database**: PostgreSQL su `SPH-SERVER-PRODUZIONE:5432`
+**Database**: PostgreSQL su `<YOUR_SERVER>:5432`
 
 **Integrazione**: L'API è integrata in `main.py` e viene eseguita in un thread separato, permettendo di avere sia la scansione NAS che l'API REST in un unico processo.
 
@@ -81,7 +81,7 @@ GET /api/statistics
   "recent_files": [
     {
       "filename": "document.pdf",
-      "directory": "\\\\192.168.1.160\\service\\CLIENTI\\Azienda1",
+      "directory": "\\\\<NAS_IP>\\<SHARE>\\<FOLDER>",
       "last_modified": "2025-10-02T09:15:30.000000"
     }
   ],
@@ -104,7 +104,7 @@ GET /api/configurations
   "configurations": [
     {
       "key": "nas_directory",
-      "value": "\\\\192.168.1.160\\service\\CLIENTI",
+      "value": "\\\\<NAS_IP>\\<SHARE>\\<FOLDER>",
       "description": "Directory del NAS da scansionare",
       "updated_at": "2025-10-01T12:00:00.000000"
     },
@@ -187,7 +187,7 @@ GET /api/scan/status
 
 Per l'accesso ai dati di file e cartelle, il frontend si connette **direttamente al database PostgreSQL**:
 
-- **Database**: `nas_scanner` su `SPH-SERVER-PRODUZIONE:5432`
+- **Database**: `nas_scanner` su `<YOUR_SERVER>:5432`
 - **Tabelle**:
   - `files` (filename, directory, last_modified)
   - `folders` (path, last_modified)
