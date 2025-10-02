@@ -9,13 +9,13 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 # Add src directory to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src'))
 
-from utility_folders import compare_subfolders_db_vs_nas
+from src.utility_folders import compare_subfolders_db_vs_nas
 import threading
 from flask import Flask
 from flask_cors import CORS
 import sqlite3
 import json
-from api_routes import register_routes
+from src.api_routes import register_routes
 
 # SQLite configuration for local settings
 SQLITE_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.db')
@@ -51,9 +51,9 @@ def run_flask_api():
     register_routes(app, get_db_connection, get_sqlite_connection)
     
     print("\n" + "="*50)
-    print("🌐 API REST Server started on http://0.0.0.0:5000")
+    print("🌐 API REST Server started on http://0.0.0.0:5050")
     print("="*50 + "\n")
-    app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
+    app.run(host='0.0.0.0', port=5050, debug=False, use_reloader=False)
 
 def create_database_if_not_exists():
     """Creates the database if it doesn't exist."""

@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 
 # Configurazione
-BASE_URL = "http://localhost:5000/api"
+BASE_URL = "http://localhost:5050/api"
 
 def print_header(title):
     print("\n" + "="*60)

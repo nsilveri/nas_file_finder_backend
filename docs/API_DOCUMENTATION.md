@@ -4,7 +4,7 @@ API REST integrata nel backend per monitorare lo stato e le statistiche del NAS 
 
 ## Configurazione
 
-**Server**: `http://localhost:5000`
+**Server**: `http://localhost:5050`
 
 **Database**: PostgreSQL su `<YOUR_SERVER>:5432`
 
