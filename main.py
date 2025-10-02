@@ -383,17 +383,17 @@ def init_configurations():
     
     # Default configurations
     default_configs = [
-        ('nas_directory', r'\\192.168.1.160\service\CLIENTI', 'NAS directory to scan'),
+        ('nas_directory', r'\\NAS\folder', 'NAS directory to scan'),
         ('scan_interval', '10', 'Interval in seconds between scans'),
         ('exclude_extensions', json.dumps(['.tmp', '.bak']), 'File extensions to exclude (JSON array)'),
         ('periodically_scan', 'true', 'Enable periodic scanning (true/false)'),
         ('scan_type', 'full', 'Scan type: "full" (complete) or "range" (time-based)'),
         ('scan_days_back', '30', 'Number of days to go back for "range" scan (e.g., 30 = last 30 days)'),
-        ('db_host', 'SPH-SERVER-PRODUZIONE', 'PostgreSQL database host'),
+        ('db_host', 'localhost', 'PostgreSQL database host'),
         ('db_port', '5432', 'PostgreSQL database port'),
         ('db_name', 'nas_scanner', 'PostgreSQL database name'),
         ('db_user', 'postgres', 'PostgreSQL database user'),
-        ('db_password', 'SphDbProduzione', 'PostgreSQL database password'),
+        ('db_password', '', 'PostgreSQL database password'),
     ]
     
     for key, value, description in default_configs:
