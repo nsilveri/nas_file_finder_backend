@@ -1,9 +1,14 @@
 from datetime import datetime
 import os
+import sys
 import time
 import psycopg2
 from psycopg2 import sql
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+
+# Add src directory to Python path
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src'))
+
 from utility_folders import compare_subfolders_db_vs_nas
 import threading
 from flask import Flask
