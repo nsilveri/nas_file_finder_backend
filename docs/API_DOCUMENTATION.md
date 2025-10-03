@@ -6,7 +6,9 @@ API REST integrata nel backend per monitorare lo stato e le statistiche del NAS 
 
 **Server**: `http://localhost:5050`
 
-**Database**: PostgreSQL su `<YOUR_SERVER>:5432`
+**Database**: 
+- **PostgreSQL** (`<YOUR_SERVER>:5432`): Files and folders data
+- **SQLite** (`config.db`): System configuration
 
 **Integrazione**: L'API è integrata in `main.py` e viene eseguita in un thread separato, permettendo di avere sia la scansione NAS che l'API REST in un unico processo.
 
@@ -185,16 +187,25 @@ GET /api/scan/status
 
 ## Accesso Diretto ai Dati
 
-Per l'accesso ai dati di file e cartelle, il frontend si connette **direttamente al database PostgreSQL**:
+Il sistema utilizza un'architettura a **doppio database**:
 
-- **Database**: `nas_scanner` su `<YOUR_SERVER>:5432`
+### PostgreSQL (`nas_scanner` su `<YOUR_SERVER>:5432`)
+Per l'accesso ai dati di file e cartelle, il frontend si connette **direttamente al database PostgreSQL**:
 - **Tabelle**:
   - `files` (filename, directory, last_modified)
   - `folders` (path, last_modified)
 
-Questo approccio permette:
-- ✅ Query più efficienti e flessibili dal frontend
-- ✅ Paginazione e filtri personalizzati
+### SQLite (`config.db`)
+Tutte le configurazioni del sistema sono memorizzate localmente in SQLite:
+- Scanner settings (directory, interval, exclusions)
+- Scan mode configuration (full/range)
+- PostgreSQL connection credentials
+- Accessible via API (`/api/configurations`)
+
+**Vantaggi di questo approccio**:
+- ✅ Query più efficienti e flessibili dal frontend (PostgreSQL)
+- ✅ Paginazione e filtri personalizzati (PostgreSQL)
+- ✅ Configurazione locale leggera (SQLite)
 - ✅ Riduzione del carico sull'API REST
 - ✅ Accesso real-time ai dati senza intermediari
 

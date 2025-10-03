@@ -4,7 +4,7 @@
 
 ### Descrizione
 
-NAS Directory Scanner è un servizio Python che esegue la scansione ricorsiva di directory su NAS, salvando informazioni su file e cartelle in un database PostgreSQL. Il sistema offre scansioni complete o incrementali basate su range temporali, con configurazione dinamica tramite database.
+NAS Directory Scanner è un servizio Python che esegue la scansione ricorsiva di directory su NAS, salvando informazioni su file e cartelle in un database PostgreSQL. Il sistema offre scansioni complete o incrementali basate su range temporali, con configurazione dinamica tramite SQLite (config.db).
 
 ### Caratteristiche Principali
 
@@ -51,9 +51,9 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Configurazione Database
+### Configurazione
 
-Il sistema utilizza una tabella `configurations` per gestire tutte le impostazioni:
+Il sistema utilizza **SQLite (config.db)** per gestire tutte le impostazioni:
 
 | Chiave | Tipo | Default | Descrizione |
 |--------|------|---------|-------------|
@@ -63,8 +63,15 @@ Il sistema utilizza una tabella `configurations` per gestire tutte le impostazio
 | `periodically_scan` | boolean | `true` | Abilita scansione periodica |
 | `scan_type` | enum | `full` | Tipo scansione: `full` o `range` |
 | `scan_days_back` | integer | `30` | Giorni da scansionare (solo per `range`) |
+| `db_host` | string | - | Indirizzo server PostgreSQL |
+| `db_port` | integer | `5432` | Porta PostgreSQL |
+| `db_name` | string | `nas_scanner` | Nome database PostgreSQL |
+| `db_user` | string | - | Username PostgreSQL |
+| `db_password` | string | - | Password PostgreSQL |
 
 ### Struttura Database
+
+**PostgreSQL (nas_scanner) - Archiviazione Dati:**
 
 ```sql
 -- Tabella file
@@ -82,16 +89,15 @@ CREATE TABLE folders (
     path TEXT NOT NULL UNIQUE,
     last_modified TIMESTAMP NOT NULL
 );
-
--- Tabella configurazioni
-CREATE TABLE configurations (
-    id SERIAL PRIMARY KEY,
-    key TEXT NOT NULL UNIQUE,
-    value TEXT NOT NULL,
-    description TEXT,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 ```
+
+**SQLite (config.db) - Archiviazione Configurazione:**
+
+Tutte le configurazioni di sistema sono salvate localmente in `config.db`:
+- Impostazioni scanner (directory, intervallo, esclusioni)
+- Configurazione modalità scansione (full/range)
+- Credenziali connessione PostgreSQL
+- Aggiornato automaticamente a runtime
 
 ### Utilizzo
 
@@ -112,15 +118,31 @@ python main.py
 Scansiona tutte le cartelle e file del NAS ad ogni esecuzione.
 
 ```sql
+-- Aggiorna tramite SQLite config.db
 UPDATE configurations SET value = 'full' WHERE key = 'scan_type';
+```
+
+Oppure usa l'API:
+```bash
+curl -X PUT http://localhost:5050/api/configurations/scan_type \
+  -H "Content-Type: application/json" \
+  -d '{"value": "full"}'
 ```
 
 #### Scansione Range (`scan_type = 'range'`)
 Scansiona solo le cartelle modificate negli ultimi N giorni.
 
 ```sql
+-- Aggiorna tramite SQLite config.db
 UPDATE configurations SET value = 'range' WHERE key = 'scan_type';
 UPDATE configurations SET value = '30' WHERE key = 'scan_days_back';  -- Ultimi 30 giorni
+```
+
+Oppure usa l'API:
+```bash
+curl -X PUT http://localhost:5050/api/configurations/scan_type \
+  -H "Content-Type: application/json" \
+  -d '{"value": "range"}'
 ```
 
 ### Output Esempio

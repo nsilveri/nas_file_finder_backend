@@ -4,7 +4,7 @@
 
 ### Description
 
-NAS Directory Scanner is a Python service that performs recursive scanning of NAS directories, saving file and folder information to a PostgreSQL database. The system offers complete or incremental scans based on time ranges, with dynamic configuration through the database.
+NAS Directory Scanner is a Python service that performs recursive scanning of NAS directories, saving file and folder information to a PostgreSQL database. The system offers complete or incremental scans based on time ranges, with dynamic configuration through SQLite (config.db).
 
 ### Main Features
 
@@ -51,9 +51,9 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Database Configuration
+### Configuration
 
-The system uses a `configurations` table to manage all settings:
+The system uses **SQLite (config.db)** to manage all settings:
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -63,8 +63,15 @@ The system uses a `configurations` table to manage all settings:
 | `periodically_scan` | boolean | `true` | Enable periodic scanning |
 | `scan_type` | enum | `full` | Scan type: `full` or `range` |
 | `scan_days_back` | integer | `30` | Days to scan (for `range` only) |
+| `db_host` | string | - | PostgreSQL server address |
+| `db_port` | integer | `5432` | PostgreSQL port |
+| `db_name` | string | `nas_scanner` | PostgreSQL database name |
+| `db_user` | string | - | PostgreSQL username |
+| `db_password` | string | - | PostgreSQL password |
 
 ### Database Structure
+
+**PostgreSQL (nas_scanner) - Data Storage:**
 
 ```sql
 -- Files table
@@ -82,16 +89,15 @@ CREATE TABLE folders (
     path TEXT NOT NULL UNIQUE,
     last_modified TIMESTAMP NOT NULL
 );
-
--- Configurations table
-CREATE TABLE configurations (
-    id SERIAL PRIMARY KEY,
-    key TEXT NOT NULL UNIQUE,
-    value TEXT NOT NULL,
-    description TEXT,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 ```
+
+**SQLite (config.db) - Configuration Storage:**
+
+All system configurations are stored locally in `config.db`:
+- Scanner settings (directory, interval, exclusions)
+- Scan mode configuration (full/range)
+- PostgreSQL connection credentials
+- Updated automatically at runtime
 
 ### Usage
 
@@ -112,15 +118,31 @@ python main.py
 Scans all NAS folders and files on each execution.
 
 ```sql
+-- Update via SQLite config.db
 UPDATE configurations SET value = 'full' WHERE key = 'scan_type';
+```
+
+Or use the API:
+```bash
+curl -X PUT http://localhost:5050/api/configurations/scan_type \
+  -H "Content-Type: application/json" \
+  -d '{"value": "full"}'
 ```
 
 #### Range Scan (`scan_type = 'range'`)
 Scans only folders modified in the last N days.
 
 ```sql
+-- Update via SQLite config.db
 UPDATE configurations SET value = 'range' WHERE key = 'scan_type';
 UPDATE configurations SET value = '30' WHERE key = 'scan_days_back';  -- Last 30 days
+```
+
+Or use the API:
+```bash
+curl -X PUT http://localhost:5050/api/configurations/scan_type \
+  -H "Content-Type: application/json" \
+  -d '{"value": "range"}'
 ```
 
 ### Example Output
